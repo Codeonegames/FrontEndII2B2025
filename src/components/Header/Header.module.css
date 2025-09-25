@@ -28,3 +28,8 @@
 .liMenu:hover>.ulSubMenu {
     max-height: 100vh;
 }
+@media (max-width:600px) {
+    .header{
+        display: none;
+    }
+}
