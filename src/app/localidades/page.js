@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import styles from './page.module.css';
 
 export default function Localidades() {
 
@@ -14,9 +15,12 @@ export default function Localidades() {
             }
             console.log(response);
             const dados = await response.json();
+            setPaises(dados);
+            setStatus("Lista de países carregados");
             console.log(dados);
             setStatus(null);
         } catch (e) {
+            setStatus(`Ocorreu um erro: ${e.message}`);
             console.log(`Ocorreu um erro: ${e.message}`);
         }
     }
@@ -26,9 +30,35 @@ export default function Localidades() {
     }, [])
 
     return (
-        <div>
-            <h1>Localidades</h1>
-            {status && <p>{status}</p>}
-        </div>
+        <>
+            <div>
+                <h1>Localidades</h1>
+                {status && <p>{status}</p>}
+            </div>
+            {paises &&
+                <div>
+                    <table className={styles.tbl}>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Região</th>
+                                <th>Nome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paises.map(sla => (
+                                <tr key={sla.id.M49}>
+                                    <td>{sla.id.M49}</td>
+                                    <td>{sla["sub-regiao"].regiao.nome}</td>
+                                    <td>{sla.nome}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                </div>
+            }
+        </>
+
     )
 }
