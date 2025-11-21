@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import styles from './page.module.css';
-import Card from '@/components/card/Card';
+import Card from '@/components/Card';
 
 export default function Produtos() {
     const produtos = [

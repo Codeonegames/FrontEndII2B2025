@@ -10,7 +10,7 @@ export default function Localidades() {
     const [ufs, setUfs] = useState([]);
     const [ufSelecionado, setUfSelecionado] = useState('');
     const [cidades, setCidades] = useState([]);
-    const [showTblCidades, setShowTblCidades] = useState(false);
+
 
     const getPaises = async () => {
         try {
@@ -30,10 +30,9 @@ export default function Localidades() {
             setStatus(`Ocorreu um erro: ${e.message}`);
             console.log(`Ocorreu um erro: ${e.message}`);
         }
-        // exibam id, nome do país e nome da região (subregião/região/nome) em uma tabela.
     }
 
-    const getUfs = async () => { // alterado
+    const getUfs = async () => {
         try {
             const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'); // alterado
             if (!response.ok) {
@@ -42,26 +41,24 @@ export default function Localidades() {
             }
             console.log(response);
             const dados = await response.json();
-            setUfs(dados); // alterado
-            // alterado
+            setUfs(dados);
             console.log(dados);
         } catch (e) {
-            // alterado
             console.log(`Ocorreu um erro: ${e.message}`);
         }
     }
 
-    const getCidades = async (uf) => { // alterado
+    const getCidades = async (uf) => {
         try {
             const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios
-`); // alterado
+`);
             if (!response.ok) {
                 setStatus(response.statusText);
                 throw new Error(`Erro ao buscar dados: ${response.statusText}`)
             }
             console.log(response);
             const dados = await response.json();
-            setCidades(dados); // alterado
+            setCidades(dados);
             console.log(dados);
         } catch (e) {
             console.log(`Ocorreu um erro: ${e.message}`);
@@ -70,14 +67,8 @@ export default function Localidades() {
 
     useEffect(() => {
         getPaises();
-        getUfs(); // adicionado
+        getUfs();
     }, [])
-
-    // const cliqueEstados = (idEstado) => {
-    //     console.log(idEstado);
-    //     setUfSelecionado(idEstado);
-    //     getCidades();
-    // }
 
     return (
         <div>
@@ -86,25 +77,6 @@ export default function Localidades() {
             {paises &&
                 <div>
                     <button type="button" onClick={() => { setShowTblPaises(!showTblPaises) }}>{showTblPaises ? 'Ocultar Paises' : 'Mostrar Países'}</button>
-                    <button type="button" onClick={() => { setShowTblCidades(!showTblCidades) }}>{showTblCidades ? 'Ocultar Cidades' : 'Mostrar Cidades'}</button>
-                    {showTblCidades &&
-                    <table className={styles.tblCity}>
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Cidade</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {cidades.map(pais => (
-                                <tr key={cidade.id.M49}>
-                                    <td>{cidade.id.M49}</td>
-                                    <td>{cidade.nome}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                        </table>}
                     {showTblPaises &&
                         <table className={styles.tbl}>
                             <thead>
@@ -127,13 +99,36 @@ export default function Localidades() {
                     }
 
                     <select
-                        onClick={ev => getCidades(ev.target.value)}
-                        
+                        onChange={ev => { const valor = ev.target.value;  getCidades(valor); setUfSelecionado(valor) }}
                     >
+                        <option value='' disabled>Escolha a Unidade Federativa</option>
                         {ufs.map(uf => (
                             <option value={uf.id} key={uf.id}>{`${uf.id} - ${uf.nome} / ${uf.sigla}`}</option>
                         ))}
                     </select>
+                    <p>Estado Selecionado: {ufSelecionado}</p>
+                    {/* exibam a lista de cidades em uma tabela. */}
+
+                    {cidades &&
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NOME</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cidades.map(cidade => (
+                                    <tr key={cidade.id}>
+                                        <td>{cidade.id}</td>
+                                        <td>{cidade.nome}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                    }
+
                 </div>
             }
         </div>
